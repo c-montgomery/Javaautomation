@@ -5,10 +5,13 @@
 package home;
 
 import java.io.*;
+import java.awt.*;
+import javax.swing.UIManager;
 /**
  *
  * @author craym
  */
+
 public class LightControl extends javax.swing.JFrame {
 
     /**
@@ -18,6 +21,7 @@ public class LightControl extends javax.swing.JFrame {
         initComponents();
     }
     boolean isOn = true;
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,10 +31,12 @@ public class LightControl extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTextField1 = new javax.swing.JTextField();
         jToggleButton1 = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+
+        jTextField1.setText("Name of light");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -46,8 +52,6 @@ public class LightControl extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setText("Name of light");
-
         jLabel2.setText("Breadboard light");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -55,28 +59,21 @@ public class LightControl extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(78, 78, 78)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addComponent(jToggleButton1)))
+                .addGap(78, 78, 78)
+                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 23, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19)
+                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -114,7 +111,10 @@ public class LightControl extends javax.swing.JFrame {
                 System.out.println("wow, it caught an exception");
                 System.out.println(e);
             }
-            jToggleButton1.setText("Off");
+            Color  blue   = new Color(0, 0, 255);
+            jToggleButton1.setText("On");
+            jToggleButton1.setBackground(Color.WHITE);
+            jToggleButton1.setForeground(Color.BLACK);
             isOn = false;
             System.out.println("is on vvvv");
             System.out.println(isOn);
@@ -132,7 +132,9 @@ public class LightControl extends javax.swing.JFrame {
                 System.out.println("wow, it caught an exception");
                 System.out.println(e);
             }
-            jToggleButton1.setText("On");
+            jToggleButton1.setBackground(Color.DARK_GRAY);
+            jToggleButton1.setForeground(Color.LIGHT_GRAY);
+            jToggleButton1.setText("Off");
             isOn = true;
             System.out.println("is on vvvv");
             System.out.println(isOn);

@@ -129,14 +129,14 @@ public class LightControl extends javax.swing.JFrame {
                 
             }
             catch(IOException e){
-                System.out.println("wow, it caught an exception");
+                System.out.println("Exception: ");
                 System.out.println(e);
             }
             jToggleButton1.setBackground(Color.DARK_GRAY);
             jToggleButton1.setForeground(Color.LIGHT_GRAY);
             jToggleButton1.setText("Off");
             isOn = true;
-            System.out.println("is on vvvv");
+            
             System.out.println(isOn);
         
         }

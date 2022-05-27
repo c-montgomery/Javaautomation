@@ -147,6 +147,6 @@ void loop() {
     snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish("topic", "time");
+    client.publish(topic, "time");
   }
 }

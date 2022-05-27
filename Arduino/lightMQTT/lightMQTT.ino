@@ -20,12 +20,17 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <TimeLib.h>
+#include "pass.h"
+
+#define ledPin 5
+#define topic "channel1/data1"
 
 // Update these with values suitable for your network.
 
-const char* ssid = "SSID";
-const char* password = "PWD";
-const char* mqtt_server = "IP";
+const char* ssid = SECRET_SSID;
+const char* password = SECRET_PASS;
+const char* mqtt_server = "192.168.0.13";
 
 boolean isOn = false;
 
@@ -107,9 +112,9 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      // client.publish("outTopic", "hello world");
+       client.publish(topic, "esp8266 functioning ");
       // ... and resubscribe
-      client.subscribe("channel1/data1");
+      client.subscribe("topic");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -121,7 +126,7 @@ void reconnect() {
 }
 
 void setup() {
-  pinMode(D7, OUTPUT);     // Initialize the D7 pin as an output
+  pinMode(ledPin, OUTPUT);     // Initialize the ledPin as an output
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -136,12 +141,12 @@ void loop() {
   client.loop();
 
   unsigned long now = millis();
-  if (now - lastMsg > 2000) {
+  if (now - lastMsg > 6000) {
     lastMsg = now;
     ++value;
     snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    //client.publish("outTopic", msg);
+    client.publish("topic", "time");
   }
 }

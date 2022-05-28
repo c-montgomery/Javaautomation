@@ -42,7 +42,7 @@ public class mqttListener {
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                SimpleDateFormat formatter = new SimpleDateFormat("HH");
                 Date date = new Date();
 
                 System.out.println(formatter.format(date));

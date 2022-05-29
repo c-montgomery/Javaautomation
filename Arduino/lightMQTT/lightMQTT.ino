@@ -11,11 +11,7 @@
   It will reconnect to the server if the connection is lost using a blocking
   reconnect function. See the 'mqtt_reconnect_nonblocking' example for how to
   achieve the same result without blocking the main loop.
-  To install the ESP8266 board, (using Arduino 1.6.4+):
-  - Add the following 3rd party board manager under "File -> Preferences -> Additional Boards Manager URLs":
-       http://arduino.esp8266.com/stable/package_esp8266com_index.json
-  - Open the "Tools -> Board -> Board Manager" and click install for the ESP8266"
-  - Select your ESP8266 in "Tools -> Board"
+ 
 */
 
 #include <ESP8266WiFi.h>
@@ -24,7 +20,8 @@
 #include "pass.h"
 
 #define ledPin 5
-#define topic "channel1/data1"
+
+#define time 0
 
 // Update these with values suitable for your network.
 
@@ -33,9 +30,38 @@ const char* password = SECRET_PASS;
 const char* mqtt_server = "192.168.0.13";
 
 boolean isOn = false;
-
 WiFiClient espClient;
-PubSubClient client(espClient);
+
+void callback(char* topic, byte* payload, unsigned int length) {
+ 
+  Serial.print("Message arrived [");
+  Serial.print("channel1/data1");
+  Serial.print("] ");
+
+  Serial.println();
+  
+  if (payload[0] == 0 || payload[0] == 1 || payload[0] == 2){
+      Serial.println("it's  O'clock");
+    }else if(payload[0] == 'l' && payload[1] == 'i') { //Checks first 2 chars of payload
+      Serial.println("in else if in callback function");
+    toggle(D7);//alter nates state of selected pin
+    
+  }
+
+  //  // Switch on the LED if an 1 was received as first character
+  //  if ((char)payload[0] == '1') {
+  //    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
+  //    // but actually the LED is on; this is because
+  //    // it is active low on the ESP-01)
+  //  } else {
+  //    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
+  //  }
+
+}
+
+
+
+PubSubClient client(mqtt_server, 1883, callback,espClient);
 unsigned long lastMsg = 0;
 #define MSG_BUFFER_SIZE	(50)
 char msg[MSG_BUFFER_SIZE];
@@ -76,30 +102,6 @@ void toggle(int arg) {
   }
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    Serial.print(payload[0]);
-  }
-  Serial.println();
-  if (payload[0] == 'l' && payload[1] == 'i') { //Checks first 2 chars of payload
-    
-    toggle(D7);//alternates state of selected pin
-    
-  }
-
-  //  // Switch on the LED if an 1 was received as first character
-  //  if ((char)payload[0] == '1') {
-  //    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-  //    // but actually the LED is on; this is because
-  //    // it is active low on the ESP-01)
-  //  } else {
-  //    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
-  //  }
-
-}
 
 void reconnect() {
   // Loop until we're reconnected
@@ -112,9 +114,9 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-       client.publish(topic, "esp8266 functioning ");
+       client.publish("channel1/data1", "esp8266 functioning ");
       // ... and resubscribe
-      client.subscribe("topic");
+      client.subscribe("time");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -127,6 +129,7 @@ void reconnect() {
 
 void setup() {
   pinMode(ledPin, OUTPUT);     // Initialize the ledPin as an output
+ 
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -147,6 +150,8 @@ void loop() {
     snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish(topic, "time");
+    client.publish("channel1/data1", "time");
+    client.subscribe("time");
+    client.setCallback(callback);
   }
 }

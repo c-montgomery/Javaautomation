@@ -19,9 +19,13 @@
 #include <TimeLib.h>
 #include "pass.h"
 
-#define ledPin 5
+#define pin1 16
+#define pin2 5
+#define pin3 4
 
-#define time 0
+int currentTime = 0;
+
+boolean isLightOn = false;
 
 // Update these with values suitable for your network.
 
@@ -32,45 +36,41 @@ const char* mqtt_server = "192.168.0.13";
 boolean isOn = false;
 WiFiClient espClient;
 
+//////Function performed when subscribed topic publishes message
 void callback(char* topic, byte* payload, unsigned int length) {
- 
+
   Serial.print("Message arrived [");
   Serial.print("channel1/data1");
   Serial.print("] ");
-
-  Serial.println();
-  
-  if (payload[0] == 0 || payload[0] == 1 || payload[0] == 2){
-      Serial.println("it's  O'clock");
-    }else if(payload[0] == 'l' && payload[1] == 'i') { //Checks first 2 chars of payload
-      Serial.println("in else if in callback function");
-    toggle(D7);//alter nates state of selected pin
+  int myInts[] = {(payload[0]-'0'),(payload[1]-'0')};
+ 
+  int tensPlace =(myInts[0]*10);
+  int onesPlace = (myInts[1]);
+  int total = tensPlace + onesPlace;
+  //currentTime = total;
+  Serial.println(total);  
+  if (payload[0] == '0' || payload[0] == '1' || payload[0] == '2') {
     
+    //Serial.println("it's " + total + "  O'clock");
+   
+  } else if (payload[0] == 'l' && payload[1] == 'i') {  //Checks first 2 chars of payload
+    Serial.println("in else if in callback function");
+    toggle(D7);  //alter nates state of selected pin
   }
-
-  //  // Switch on the LED if an 1 was received as first character
-  //  if ((char)payload[0] == '1') {
-  //    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
-  //    // but actually the LED is on; this is because
-  //    // it is active low on the ESP-01)
-  //  } else {
-  //    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
-  //  }
-
 }
 
 
 
-PubSubClient client(mqtt_server, 1883, callback,espClient);
+PubSubClient client(mqtt_server, 1883, callback, espClient);
 unsigned long lastMsg = 0;
-#define MSG_BUFFER_SIZE	(50)
+#define MSG_BUFFER_SIZE (50)
 char msg[MSG_BUFFER_SIZE];
 int value = 0;
 
 void setup_wifi() {
 
   delay(10);
-  
+
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
@@ -101,7 +101,25 @@ void toggle(int arg) {
     digitalWrite(arg, HIGH);
   }
 }
+void fadeOn(int a, int b){
+  for (int i = 0; i<256; i++){
+    analogWrite(a, i);
+    analogWrite(b, i);
+  }
+  isLightOn = true;
+}
 
+void fadeOff(int a, int b){
+  for (int i = 255; i>=0; i--){
+    analogWrite(a, i);
+    analogWrite(b, i);
+  }
+  isLightOn = false; 
+
+}
+void state(){
+
+}
 
 void reconnect() {
   // Loop until we're reconnected
@@ -114,7 +132,7 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-       client.publish("channel1/data1", "esp8266 functioning ");
+      client.publish("channel1/data1", "esp8266 functioning ");
       // ... and resubscribe
       client.subscribe("time");
     } else {
@@ -128,30 +146,42 @@ void reconnect() {
 }
 
 void setup() {
-  pinMode(ledPin, OUTPUT);     // Initialize the ledPin as an output
- 
+  pinMode(pin1, OUTPUT);  // Initialize pin1 as an output
+
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
+  client.subscribe("time");
   client.setCallback(callback);
 }
 
 void loop() {
 
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
-
   unsigned long now = millis();
   if (now - lastMsg > 6000) {
     lastMsg = now;
     ++value;
-    snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
+    snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
+   
     Serial.print("Publish message: ");
     Serial.println(msg);
     client.publish("channel1/data1", "time");
-    client.subscribe("time");
-    client.setCallback(callback);
+    
+    
   }
+  if (!client.connected()) {
+    reconnect();
+  } else if (currentTime > 1 && currentTime < 19) {
+    if (isLightOn){
+      fadeOff(pin2,pin3);
+      }
+    
+    ESP.deepSleep(3600000000); //Sleep for an hr
+  }else{
+    if (!isLightOn){
+    fadeOn(pin2,pin3);
+    }
+  }
+  client.loop();
+
 }

@@ -72,7 +72,7 @@ public class mqttListener {
 
 		String pathName = "C:\\Program Files\\mosquitto\\";
 		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_pub.exe", "-h", "192.168.0.13", "-p", "1883",
-				"-t", "channel1/data1", "-m", time};
+				"-t", "time", "-m", time};
 
 		ProcessBuilder builder = new ProcessBuilder(command); // create mosquitto_pub process listener
 		builder = builder.directory(new File(pathName));

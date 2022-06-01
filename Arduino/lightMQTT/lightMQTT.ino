@@ -47,7 +47,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   int tensPlace =(myInts[0]*10);
   int onesPlace = (myInts[1]);
   int total = tensPlace + onesPlace;
-  //currentTime = total;
+  currentTime = total;
   Serial.println(total);  
   if (payload[0] == '0' || payload[0] == '1' || payload[0] == '2') {
     
@@ -55,7 +55,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
    
   } else if (payload[0] == 'l' && payload[1] == 'i') {  //Checks first 2 chars of payload
     Serial.println("in else if in callback function");
-    toggle(D7);  //alter nates state of selected pin
+    toggle(D7);  //alternates state of selected pin
   }
 }
 
@@ -148,7 +148,7 @@ void reconnect() {
 void setup() {
   pinMode(pin1, OUTPUT);  // Initialize pin1 as an output
 
-  Serial.begin(115200);
+  Serial.begin(74880);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.subscribe("time");
@@ -169,19 +169,22 @@ void loop() {
     
     
   }
+ 
   if (!client.connected()) {
     reconnect();
-  } else if (currentTime > 1 && currentTime < 19) {
+  } else if (currentTime >= 19 && currentTime <= 23) {
     if (isLightOn){
       fadeOff(pin2,pin3);
       }
-    
+    Serial.println("going into deep sleep for an hr");
     ESP.deepSleep(3600000000); //Sleep for an hr
+    Serial.println("Awoke from deep sleep");
   }else{
     if (!isLightOn){
     fadeOn(pin2,pin3);
     }
   }
   client.loop();
+  yield();
 
 }

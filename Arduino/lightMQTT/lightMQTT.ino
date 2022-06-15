@@ -17,11 +17,17 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <TimeLib.h>
+#include <LiquidCrystal_I2C.h>
 #include "pass.h"
 
-#define pin1 16
-#define pin2 5
-#define pin3 4
+#define pin1 5
+#define pin2 4
+#define pin3 0
+#define pin4 2
+
+//LCD creation
+LiquidCrystal_I2C lcd(0x27,16,2);
+
 
 int currentTime = 0;
 
@@ -35,6 +41,7 @@ const char* mqtt_server = "192.168.0.13";
 
 boolean isOn = false;
 WiFiClient espClient;
+
 
 //////Function performed when subscribed topic publishes message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -82,12 +89,17 @@ void setup_wifi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    lcd.print(".");
   }
 
   randomSeed(micros());
 
   Serial.println("");
   Serial.println("WiFi connected");
+  lcd.clear();
+  lcd.setCursor(3,0);
+  lcd.print("Connected!");
+  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
@@ -122,6 +134,7 @@ void state(){
 }
 
 void reconnect() {
+  
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -148,6 +161,13 @@ void reconnect() {
 void setup() {
   pinMode(pin1, OUTPUT);  // Initialize pin1 as an output
 
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(3,0);
+  lcd.print("Connecting");
+  lcd.setCursor(0,1);
+  
+
   Serial.begin(74880);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -169,6 +189,18 @@ void loop() {
     
     
   }
+  // when characters arrive over the serial port...
+  if (Serial.available()) {
+    // wait a bit for the entire message to arrive
+    delay(100);
+    // clear the screen
+    lcd.clear();
+    // read all the available characters
+    while (Serial.available() > 0) {
+      // display each character to the LCD
+      lcd.write(Serial.read());
+    }
+  }
  
   if (!client.connected()) {
     reconnect();
@@ -176,9 +208,9 @@ void loop() {
     if (isLightOn){
       fadeOff(pin2,pin3);
       }
-    Serial.println("going into deep sleep for an hr");
-    ESP.deepSleep(3600000000); //Sleep for an hr
-    Serial.println("Awoke from deep sleep");
+    //Serial.println("going into deep sleep for an hr");
+    //ESP.deepSleep(3600000000); //Sleep for an hr
+    //Serial.println("Awoke from deep sleep");
   }else{
     if (!isLightOn){
     fadeOn(pin2,pin3);

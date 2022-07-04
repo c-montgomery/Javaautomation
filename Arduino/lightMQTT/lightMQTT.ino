@@ -20,8 +20,8 @@
 #include <LiquidCrystal_I2C.h>
 #include "pass.h"
 
-#define pin1 5
-#define pin2 4
+#define pin6 12
+#define pin5 14
 #define pin3 0
 #define pin4 2
 
@@ -37,7 +37,7 @@ boolean isLightOn = false;
 
 const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASS;
-const char* mqtt_server = "192.168.0.13";
+const char* mqtt_server = "192.168.0.25";
 
 boolean isOn = false;
 WiFiClient espClient;
@@ -159,7 +159,7 @@ void reconnect() {
 }
 
 void setup() {
-  pinMode(pin1, OUTPUT);  // Initialize pin1 as an output
+  pinMode(pin6, OUTPUT);  // Initialize pin6 as an output
 
   lcd.init();
   lcd.backlight();
@@ -206,14 +206,16 @@ void loop() {
     reconnect();
   } else if (currentTime >= 19 && currentTime <= 23) {
     if (isLightOn){
-      fadeOff(pin2,pin3);
+      fadeOff(pin5,pin3);
       }
-    //Serial.println("going into deep sleep for an hr");
-    //ESP.deepSleep(3600000000); //Sleep for an hr
-    //Serial.println("Awoke from deep sleep");
+    Serial.println("going into deep sleep for an hr");
+    lcd.setCursor(1,0);
+    lcd.println("deep sleep");
+    ESP.deepSleep(3000); //Sleep for an hr
+    Serial.println("Awoke from deep sleep");
   }else{
     if (!isLightOn){
-    fadeOn(pin2,pin3);
+    fadeOn(pin5,pin3);
     }
   }
   client.loop();

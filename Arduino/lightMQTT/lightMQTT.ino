@@ -39,7 +39,7 @@ const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASS;
 const char* mqtt_server = "192.168.0.25";
 
-boolean isOn = false;
+
 WiFiClient espClient;
 
 
@@ -105,11 +105,11 @@ void setup_wifi() {
 }
 
 void toggle(int arg) {
-  if (isOn) {
-    isOn = false;
+  if (true) {
+  //  isOn = false;
     digitalWrite(arg, LOW);
   } else {
-    isOn = true;
+  //  isOn = true;
     digitalWrite(arg, HIGH);
   }
 }
@@ -145,7 +145,7 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("channel1/data1", "esp8266 functioning ");
+      client.publish("test", "esp8266 functioning ");
       // ... and resubscribe
       client.subscribe("time");
     } else {
@@ -205,18 +205,25 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   } else if (currentTime >= 19 && currentTime <= 23) {
+    if (!isLightOn){
+    fadeOn(pin5,pin3);
+    }
+    lcd.setCursor(5,1);
+    lcd.println("current time: "+ currentTime);
+    
+  }else{
     if (isLightOn){
       fadeOff(pin5,pin3);
       }
     Serial.println("going into deep sleep for an hr");
     lcd.setCursor(1,0);
     lcd.println("deep sleep");
-    ESP.deepSleep(3000); //Sleep for an hr
+    lcd.setCursor(5,1);
+    lcd.println("current time: "+ currentTime);
+    delay(2000);
+    
+    ESP.deepSleep(3000); //Sleep for 3 seconds
     Serial.println("Awoke from deep sleep");
-  }else{
-    if (!isLightOn){
-    fadeOn(pin5,pin3);
-    }
   }
   client.loop();
   yield();

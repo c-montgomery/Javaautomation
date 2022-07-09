@@ -43,6 +43,24 @@ const char* mqtt_server = "192.168.0.25";
 WiFiClient espClient;
 
 
+void toggle(int arg) {
+  if (true) {
+  //  isOn = false;
+    digitalWrite(arg, LOW);
+  } else {
+  //  isOn = true;
+    digitalWrite(arg, HIGH);
+  }
+}
+void fadeOn(int a, int b){
+  for (int i = 0; i<256; i++){
+    analogWrite(a, i);
+    analogWrite(b, i);
+  }
+  isLightOn = true;
+}
+
+
 //////Function performed when subscribed topic publishes message
 void callback(char* topic, byte* payload, unsigned int length) {
 
@@ -102,23 +120,6 @@ void setup_wifi() {
   
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-}
-
-void toggle(int arg) {
-  if (true) {
-  //  isOn = false;
-    digitalWrite(arg, LOW);
-  } else {
-  //  isOn = true;
-    digitalWrite(arg, HIGH);
-  }
-}
-void fadeOn(int a, int b){
-  for (int i = 0; i<256; i++){
-    analogWrite(a, i);
-    analogWrite(b, i);
-  }
-  isLightOn = true;
 }
 
 void fadeOff(int a, int b){
@@ -185,7 +186,7 @@ void loop() {
    
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish("channel1/data1", "time");
+    client.publish("test", "time");
     
     
   }
@@ -215,15 +216,15 @@ void loop() {
     if (isLightOn){
       fadeOff(pin5,pin3);
       }
-    Serial.println("going into deep sleep for an hr");
-    lcd.setCursor(1,0);
-    lcd.println("deep sleep");
-    lcd.setCursor(5,1);
-    lcd.println("current time: "+ currentTime);
-    delay(2000);
+   // Serial.println("going into deep sleep for an hr");
+    //lcd.setCursor(1,0);
+   // lcd.println("deep sleep");
+ //   lcd.setCursor(5,1);
+  //  lcd.println("current time: "+ currentTime);
+//    delay(2000);
     
-    ESP.deepSleep(3000); //Sleep for 3 seconds
-    Serial.println("Awoke from deep sleep");
+    //ESP.deepSleep(3000); //Sleep for 3 seconds
+    //Serial.println("Awoke from deep sleep");
   }
   client.loop();
   yield();

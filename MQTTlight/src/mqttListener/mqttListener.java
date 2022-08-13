@@ -10,12 +10,10 @@ import java.util.Date;
 public class mqttListener {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("in main --firsssssssst");
+		// listen for time calls, and respond with time via MQTT
 
 		listener();
 		
-
 	}
 
 	public static void listener() {
@@ -70,6 +68,7 @@ public class mqttListener {
 
 		Scanner stdin = new Scanner(System.in);
 
+		
 		String pathName = "C:\\Program Files\\mosquitto\\";
 		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_pub.exe", "-h", "192.168.0.13", "-p", "1883",
 				"-t", "time", "-m", time};

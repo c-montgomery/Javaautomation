@@ -20,7 +20,8 @@ public class mqttListener {
 		System.out.println("starting");
 
 		Scanner stdin = new Scanner(System.in);
-
+		System.out.println(System.getProperty("os.name"));
+		// if (System.getProperty("os.name") =="");
 		String pathName = "C:\\Program Files\\mosquitto\\";
 		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_sub.exe", "-h", "192.168.0.13", "-p", "1883",
 				"-t", "channel1/data1" };
@@ -68,7 +69,7 @@ public class mqttListener {
 
 		Scanner stdin = new Scanner(System.in);
 
-		
+
 		String pathName = "C:\\Program Files\\mosquitto\\";
 		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_pub.exe", "-h", "192.168.0.13", "-p", "1883",
 				"-t", "time", "-m", time};

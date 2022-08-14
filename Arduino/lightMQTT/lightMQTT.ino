@@ -176,9 +176,9 @@ void loop() {
     if (isLightOn){
       fadeOff(pin2,pin3);
       }
-    Serial.println("going into deep sleep for an hr");
-    ESP.deepSleep(3600000000); //Sleep for an hr
-    Serial.println("Awoke from deep sleep");
+   // Serial.println("going into deep sleep for an hr");
+   // ESP.deepSleep(3600000000); //Sleep for an hr
+    //Serial.println("Awoke from deep sleep");
   }else{
     if (!isLightOn){
     fadeOn(pin2,pin3);

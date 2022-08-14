@@ -12,7 +12,7 @@ public class mqttListener {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("in main --firsssssssst");
-
+		System.getProperty("OS.name");
 		listener();
 		
 
@@ -22,10 +22,20 @@ public class mqttListener {
 		System.out.println("starting");
 
 		Scanner stdin = new Scanner(System.in);
-
+		
 		String pathName = "C:\\Program Files\\mosquitto\\";
-		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_sub.exe", "-h", "192.168.0.13", "-p", "1883",
-				"-t", "channel1/data1" };
+		String[] command = new String[10];
+		
+		
+		if (System.getProperty("os.name") == "Linux") {
+			pathName = "/etc/mosquitto";
+			command[1] = "/etc/mosquitto/mosquitto_sub";
+			
+		}else {
+			pathName = "C:\\Program Files\\mosquitto\\";
+			command[1] = "C:\\Program Files\\mosquitto\\mosquitto_sub.exe";
+		}
+		
 
 		ProcessBuilder builder = new ProcessBuilder(command); // create mosquitto_sub process listener
 		builder = builder.directory(new File(pathName));

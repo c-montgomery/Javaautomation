@@ -26,8 +26,8 @@ public class mqttListener {
 		String pathName = "C:\\Program Files\\mosquitto\\";
 		String[] command = new String[10];
 		
-		
-		if (System.getProperty("os.name") == "Linux") {
+		String OS = System.getProperty("os.name");
+		if (OS.equals("Linux")) {
 			pathName = "/etc/mosquitto";
 			command[1] = "/etc/mosquitto/mosquitto_sub";
 			
@@ -67,10 +67,12 @@ public class mqttListener {
 				}
 			}
 
-		} catch (IOException e) {
+		} catch (NullPointerException e) {
 			System.out.println("wow, it caught an exception");
 			System.out.println(e);
 			
+		} catch (IOException e) {
+			System.out.println("there's a captured IOException");
 		}
 		
 	}

@@ -24,26 +24,34 @@ public class mqttListener {
 		Scanner stdin = new Scanner(System.in);
 		
 		String pathName = "C:\\Program Files\\mosquitto\\";
-		String[] command = new String[10];
+		String[] command = new String[7];
 		
 		String OS = System.getProperty("os.name");
 		if (OS.equals("Linux")) {
-			pathName = "/etc/mosquitto";
-			command[1] = "/etc/mosquitto/mosquitto_sub";
-			
+			pathName = "/usr/bin";
+			command[0] = "/usr/bin/mosquitto_sub";
+			command[1] = "-t";
+			command[2] = "time";
+			command[3] = "-h";
+			command[4] = "192.168.0.25";
+			command[5] = "-p";
+			command[6] = "1883";	
 		}else {
 			pathName = "C:\\Program Files\\mosquitto\\";
-			command[1] = "C:\\Program Files\\mosquitto\\mosquitto_sub.exe";
+			command[0] = "C:\\Program Files\\mosquitto\\mosquitto_sub.exe";
 		}
 		
 
 		ProcessBuilder builder = new ProcessBuilder(command); // create mosquitto_sub process listener
+		System.out.println(pathName);
 		builder = builder.directory(new File(pathName));
 
 		try {
 			System.out.println("builder in directory: " + builder.directory());
 			System.out.println("Attempting to start ");
+			System.out.println("mosquitto sub?" + command[0]);
 			Process process = builder.start();
+			System.out.println("Started buidler successfully");
 			InputStream stream = process.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 

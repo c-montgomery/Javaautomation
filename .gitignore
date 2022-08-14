@@ -3,3 +3,5 @@ pass.h
 .gitignore
 .vscode
 .DS_Store
+.swp
+

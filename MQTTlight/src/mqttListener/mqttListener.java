@@ -12,7 +12,7 @@ public class mqttListener {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("in main --firsssssssst");
-		System.getProperty("OS.name");
+		System.out.println(System.getProperty("os.name"));
 		listener();
 		
 

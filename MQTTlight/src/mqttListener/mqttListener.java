@@ -23,24 +23,21 @@ public class mqttListener {
 
 		Scanner stdin = new Scanner(System.in);
 		
-		String pathName = "C:\\Program Files\\mosquitto\\";
+		String pathName = "";
 		String[] command = new String[7];
 		
 		String OS = System.getProperty("os.name");
-		if (OS.equals("Linux")) {
-			pathName = "/usr/bin";
-			command[0] = "/usr/bin/mosquitto_sub";
+		System.out.println(OS);
+		
+			pathName = "/bin";
+			command[0] = "/bin/mosquitto_sub";
 			command[1] = "-t";
 			command[2] = "time";
 			command[3] = "-h";
 			command[4] = "192.168.0.25";
 			command[5] = "-p";
 			command[6] = "1883";	
-		}else {
-			pathName = "C:\\Program Files\\mosquitto\\";
-			command[0] = "C:\\Program Files\\mosquitto\\mosquitto_sub.exe";
-		}
-		
+	
 
 		ProcessBuilder builder = new ProcessBuilder(command); // create mosquitto_sub process listener
 		System.out.println(pathName);
@@ -90,9 +87,8 @@ public class mqttListener {
 
 		Scanner stdin = new Scanner(System.in);
 
-		String pathName = "C:\\Program Files\\mosquitto\\";
-		String[] command = { "C:\\Program Files\\mosquitto\\mosquitto_pub.exe", "-h", "192.168.0.13", "-p", "1883",
-				"-t", "time", "-m", time};
+		String pathName = "/bin";
+		String[] command = { "/bin/mosquitto_pub", "-h", "192.168.0.25","-t", "time","-m", time};
 
 		ProcessBuilder builder = new ProcessBuilder(command); // create mosquitto_pub process listener
 		builder = builder.directory(new File(pathName));

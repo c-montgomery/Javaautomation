@@ -17,11 +17,10 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <TimeLib.h>
-#include "pass.h"
+#include "include/pass.h"
 
-#define pin1 16
-#define pin2 5
-#define pin3 4
+#define pin1 5
+#define pin2 4
 
 int currentTime = 0;
 
@@ -31,9 +30,8 @@ boolean isLightOn = false;
 
 const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASS;
-const char* mqtt_server = "192.168.0.13";
+const char* mqtt_server = "192.168.0.25";
 
-boolean isOn = false;
 WiFiClient espClient;
 
 //////Function performed when subscribed topic publishes message
@@ -43,7 +41,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("channel1/data1");
   Serial.print("] ");
   int myInts[] = {(payload[0]-'0'),(payload[1]-'0')};
- 
+  Serial.print(payload[0]);
   int tensPlace =(myInts[0]*10);
   int onesPlace = (myInts[1]);
   int total = tensPlace + onesPlace;
@@ -55,7 +53,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
    
   } else if (payload[0] == 'l' && payload[1] == 'i') {  //Checks first 2 chars of payload
     Serial.println("in else if in callback function");
-    toggle(D7);  //alternates state of selected pin
   }
 }
 
@@ -92,41 +89,14 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void toggle(int arg) {
-  if (isOn) {
-    isOn = false;
-    digitalWrite(arg, LOW);
-  } else {
-    isOn = true;
-    digitalWrite(arg, HIGH);
-  }
-}
-void fadeOn(int a, int b){
-  for (int i = 0; i<256; i++){
-    analogWrite(a, i);
-    analogWrite(b, i);
-  }
-  isLightOn = true;
-}
-
-void fadeOff(int a, int b){
-  for (int i = 255; i>=0; i--){
-    analogWrite(a, i);
-    analogWrite(b, i);
-  }
-  isLightOn = false; 
-
-}
-void state(){
-
-}
-
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
+    Serial.println("WIFI STATIS");
+    Serial.println(WiFi.status() );
     Serial.print("Attempting MQTT connection...");
     // Create a random client ID
-    String clientId = "ESP8266Client-";
+    String clientId = "ESP8266-";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
     if (client.connect(clientId.c_str())) {
@@ -172,19 +142,9 @@ void loop() {
  
   if (!client.connected()) {
     reconnect();
-  } else if (currentTime >= 19 && currentTime <= 23) {
-    if (isLightOn){
-      fadeOff(pin2,pin3);
-      }
-   // Serial.println("going into deep sleep for an hr");
-   // ESP.deepSleep(3600000000); //Sleep for an hr
-    //Serial.println("Awoke from deep sleep");
-  }else{
-    if (!isLightOn){
-    fadeOn(pin2,pin3);
-    }
+  } else if (currentTime >= 18 && currentTime <= 23) {
+    digitalWrite(pin1, HIGH);
   }
   client.loop();
-  yield();
 
 }

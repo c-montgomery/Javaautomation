@@ -24,7 +24,7 @@
 
 int currentTime = 0;
 
-boolean isLightOn = false;
+boolean isOn = false;
 
 // Update these with values suitable for your network.
 
@@ -132,19 +132,31 @@ void loop() {
     lastMsg = now;
     ++value;
     snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
+    Serial.print("Time is: ");
+    Serial.println(currentTime);
+    if (!client.connected()) {
+      reconnect();
+    } else if (currentTime >= 18 && currentTime <= 23) {
+      analogWrite(pin1, 255);
+      if(isOn){
+      
+      isOn = true;
+      }
+    }else{
+      Serial.println("IN ELSE<");
+      analogWrite(pin1, 0);
+      isOn = false;
+      }
+
    
-    Serial.print("Publish message: ");
+    Serial.println("Publish message: ");
     Serial.println(msg);
-    client.publish("channel1/data1", "time");
+    client.publish("time", "time");
     
     
   }
  
-  if (!client.connected()) {
-    reconnect();
-  } else if (currentTime >= 18 && currentTime <= 23) {
-    digitalWrite(pin1, HIGH);
-  }
+  
   client.loop();
 
 }

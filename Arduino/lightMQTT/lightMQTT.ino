@@ -19,6 +19,7 @@
 #include <TimeLib.h>
 #include "include/pass.h"
 
+#define pin0 2
 #define pin1 5
 #define pin2 4
 
@@ -38,7 +39,7 @@ WiFiClient espClient;
 void callback(char* topic, byte* payload, unsigned int length) {
 
   Serial.print("Message arrived [");
-  Serial.print("channel1/data1");
+  Serial.print(topic);
   Serial.print("] ");
   int myInts[] = {(payload[0]-'0'),(payload[1]-'0')};
   Serial.print(payload[0]);
@@ -92,20 +93,22 @@ void setup_wifi() {
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    Serial.println("WIFI STATIS");
+    Serial.println("WIFI STATUS");
     Serial.println(WiFi.status() );
     Serial.print("Attempting MQTT connection...");
     // Create a random client ID
-    String clientId = "ESP8266-";
+    String clientId = "ESP8266---";
     clientId += String(random(0xffff), HEX);
     // Attempt to connect
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
+      digitalWrite(pin0, LOW);
       // Once connected, publish an announcement...
       client.publish("channel1/data1", "esp8266 functioning ");
       // ... and resubscribe
       client.subscribe("time");
     } else {
+      digitalWrite(pin0, HIGH);
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
@@ -116,9 +119,13 @@ void reconnect() {
 }
 
 void setup() {
-  pinMode(pin1, OUTPUT);  // Initialize pin1 as an output
-
+  //Initialize pins as outputs
+  pinMode(pin0,OUTPUT);
+  pinMode(pin1, OUTPUT);  
+  pinMode(pin2, OUTPUT);
+  
   Serial.begin(74880);
+  
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.subscribe("time");
@@ -135,6 +142,7 @@ void loop() {
     Serial.print("Time is: ");
     Serial.println(currentTime);
     if (!client.connected()) {
+      
       reconnect();
     } else if (currentTime >= 18 && currentTime <= 23) {
       analogWrite(pin1, 255);
